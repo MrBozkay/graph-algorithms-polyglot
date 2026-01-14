@@ -1,0 +1,39 @@
+[package]
+name = "graph-algorithms"
+version = "0.1.0"
+edition = "2021"
+authors = ["Graph Algorithms Polyglot Contributors"]
+description = "Professional implementation of classic graph algorithms"
+license = "MIT"
+repository = "https://github.com/yourusername/graph-algorithms-polyglot"
+keywords = ["graph", "algorithms", "dijkstra", "astar", "bellman-ford"]
+categories = ["algorithms", "data-structures"]
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "benchmarks"
+harness = false
+
+[lib]
+name = "graph_algorithms"
+path = "src/lib.rs"
+
+[[example]]
+name = "gps_navigation"
+path = "examples/gps_navigation.rs"
+
+[[example]]
+name = "game_pathfinding"
+path = "examples/game_pathfinding.rs"
+
+[[example]]
+name = "currency_arbitrage"
+path = "examples/currency_arbitrage.rs"
+
+[[example]]
+name = "social_network"
+path = "examples/social_network.rs"

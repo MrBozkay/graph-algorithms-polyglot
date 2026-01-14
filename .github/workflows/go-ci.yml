@@ -1,0 +1,75 @@
+name: Go CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "go/**"
+      - ".github/workflows/go-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "go/**"
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go-version: ["1.21", "1.22"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Download dependencies
+        working-directory: ./go
+        run: go mod download
+
+      - name: Run tests
+        working-directory: ./go
+        run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./go/coverage.txt
+          flags: go
+          name: go-${{ matrix.go-version }}
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: ./go
+
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Run benchmarks
+        working-directory: ./go
+        run: go test -bench=. -benchmem ./...
